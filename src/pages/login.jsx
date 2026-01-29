@@ -1,48 +1,48 @@
+
 import { useState } from "react";
 
-function Login({ onLogin, onSignupClick }) {   // ✅ destructuring props
+function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handle = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (
-      email === "narkeanushka@gmail.com" &&
-      password === "password2211"
-    ) {
-      onLogin();   // ✅ this NOW works
+    const storedUsers = JSON.parse(localStorage.getItem("usersdata"));
+    
+    if (!storedUsers) {
+      setError("No user found. Please register first.");
+      return;
+    }
+    
+    if (email === storedUsers.email && password === storedUsers.password) {
+      onLogin();
     } else {
       setError("Invalid email or password");
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px", border: "1px solid #ddd", borderRadius: "8px" }}>
-      <h2>Login Page</h2>
-
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ width: "100%", padding: "8px", marginBottom: "10px", boxSizing: "border-box" }}
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ width: "100%", padding: "8px", marginBottom: "10px", boxSizing: "border-box" }}
-      />
-
-      <button onClick={handle} style={{ width: "100%", padding: "10px", backgroundColor: "#007bff", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", marginBottom: "10px" }}>Login</button>
-
-      {error && <p style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
-
-      <p style={{ textAlign: "center" }}>Don't have an account? <button onClick={onSignupClick} style={{ background: "none", border: "none", color: "#007bff", cursor: "pointer", textDecoration: "underline" }}>Sign Up</button></p>
+    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
